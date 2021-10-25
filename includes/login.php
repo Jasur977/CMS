@@ -23,7 +23,7 @@ if (isset($_POST['login'])){
        die("query failed" . mysqli_error($connection));
    }
 
-   while ($row = mysqli_fetch_array($select_user_query)){
+   while ( $row = mysqli_fetch_array($select_user_query)) {
        $db_id = $row['user_id'];
        $db_username = $row['username'];
        $db_user_password = $row['user_password'];
@@ -31,15 +31,12 @@ if (isset($_POST['login'])){
        $db_user_lastname = $row['user_lastname'];
        $db_user_role = $row['user_role'];
 
-
    }
-
-    $password = crypt($password, $db_user_password);
+//   $password = crypt($password, $db_user_password);
 
     if($username !== $db_username && $password !== $db_user_password){
         header ("Location: ../index.php ");
     }
-
 
     else if ($username == $db_username && $password == $db_user_password){
 
