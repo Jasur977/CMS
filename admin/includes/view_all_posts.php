@@ -1,75 +1,77 @@
 <?php
 global $connection;
-if (isset($_POST['checkboxArray'])){
-
-    foreach($_POST['checkboxArray'] as $postValueId){
-
-      $bulk_options= $_POST['bulk_options'];
-
-      switch ($bulk_options){
-          case 'published':
-              $query = "UPDATE posts SET post_status= '{$bulk_options}' WHERE post_id= '$postValueId' ";
-              $update_to_publish= mysqli_query($connection, $query);
-              confirmquery($update_to_publish);
-
-              break;
+if (isset($_POST['submit'])) {
 
 
-
-          case 'draft':
-              $query = "UPDATE posts SET post_status= '{$bulk_options}' WHERE post_id= '$postValueId' ";
-              $update_to_draft= mysqli_query($connection, $query);
-              confirmquery($update_to_draft);
-
-              break;
-
-          case 'delete':
-              $query = "DELETE FROM posts WHERE post_id= '$postValueId' ";
-              $update_to_delete= mysqli_query($connection, $query);
-              confirmquery($update_to_delete);
-
-              break;
-
-          case 'clone':
+    if (isset($_POST['checkboxArray[]'])) {
 
 
-              $query = "SELECT * FROM posts WHERE post_id = '{$postValueId}' ";
-              $select_post_query = mysqli_query($connection, $query);
+        foreach ($_POST['checkboxArray[]'] as $postValueId) {
+
+            $bulk_options = $_POST['bulk_options'];
+
+            switch ($bulk_options) {
+                case 'published':
+                    $query = "UPDATE posts SET post_status= '{$bulk_options}' WHERE post_id= '$postValueId' ";
+                    $update_to_publish = mysqli_query($connection, $query);
+                    confirmquery($update_to_publish);
+
+                    break;
 
 
+                case 'draft':
+                    $query = "UPDATE posts SET post_status= '{$bulk_options}' WHERE post_id= '$postValueId' ";
+                    $update_to_draft = mysqli_query($connection, $query);
+                    confirmquery($update_to_draft);
 
-              while ($row = mysqli_fetch_array($select_post_query)) {
-                  $post_title         = $row['post_title'];
-                  $post_category_id   = $row['post_category_id'];
-                  $post_date          = $row['post_date'];
-                  $post_author        = $row['post_author'];
-                  $post_status        = $row['post_status'];
-                  $post_image         = $row['post_image'] ;
-                  $post_tags          = $row['post_tags'];
-                  $post_content       = $row['post_content'];
+                    break;
 
-              }
+                case 'delete':
+                    $query = "DELETE FROM posts WHERE post_id= '$postValueId' ";
+                    $update_to_delete = mysqli_query($connection, $query);
+                    confirmquery($update_to_delete);
+
+                    break;
+
+                case 'clone':
 
 
-              $query = "INSERT INTO posts(post_category_id, post_title, post_author, post_date,post_image,post_content,post_tags,post_status) ";
+                    $query = "SELECT * FROM posts WHERE post_id = '{$postValueId}' ";
+                    $select_post_query = mysqli_query($connection, $query);
 
-              $query .= "VALUES({$post_category_id},'{$post_title}','{$post_author}',now(),'{$post_image}','{$post_content}','{$post_tags}', '{$post_status}') ";
 
-              $copy_query = mysqli_query($connection, $query);
+                    while ($row = mysqli_fetch_array($select_post_query)) {
+                        $post_title = $row['post_title'];
+                        $post_category_id = $row['post_category_id'];
+                        $post_date = $row['post_date'];
+                        $post_author = $row['post_author'];
+                        $post_status = $row['post_status'];
+                        $post_image = $row['post_image'];
+                        $post_tags = $row['post_tags'];
+                        $post_content = $row['post_content'];
 
-              if(!$copy_query ) {
+                    }
 
-                  die("QUERY FAILED" . mysqli_error($connection));
-              }
 
-              break;
+                    $query = "INSERT INTO posts(post_category_id, post_title, post_author, post_date,post_image,post_content,post_tags,post_status) ";
 
-      }
+                    $query .= "VALUES({$post_category_id},'{$post_title}','{$post_author}',now(),'{$post_image}','{$post_content}','{$post_tags}', '{$post_status}') ";
+
+                    $copy_query = mysqli_query($connection, $query);
+
+                    if (!$copy_query) {
+
+                        die("QUERY FAILED" . mysqli_error($connection));
+                    }
+
+                    break;
+
+            }
+
+        }
 
     }
-
 }
-
 
 ?>
 
@@ -86,12 +88,12 @@ if (isset($_POST['checkboxArray'])){
         </select>
     </div>
     <div class="col-xs-4">
-        <input type="submit" name="submit" class="btn btn-success" value="Apply">
+        <input name="submit" type="submit" class="btn btn-success" value="Apply">
         <a class="btn btn-primary" href="posts.php?source=add_post">Add New</a>
     </div>
     <thead>
     <tr>
-        <th><input type="checkbox" id="selectAllBoxes"> </th>
+        <th><input type="checkbox" id="selectAllBoxes[]"> </th>
         <th>ID</th>
         <th>Author</th>
         <th>Title</th>
@@ -130,7 +132,7 @@ if (isset($_POST['checkboxArray'])){
         echo "<tr>";
 
         ?>
-        <td><input class='checkBoxes' type='checkbox' name='checkBoxArray[]' value='<?php echo $post_id; ?>'></td>
+        <td><input class='checkBoxes' type='checkbox' name='checkboxArray[]' value='<?php echo $post_id; ?>'></td>
 
 
         <?php
